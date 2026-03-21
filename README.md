@@ -28,12 +28,13 @@ git clone https://github.com/hungchunchang/SocialRoboticsProgram.git
 
 ### 環境建置
 
-詳細步驟請參考 [`00_materials/README.md`](00_materials/README.md)，包含：
+詳細步驟請參考 [`00_simple_chatbot/README.md`](00_simple_chatbot/README.md)，包含：
 
 - 安裝 **VSCode** 編輯器
 - 安裝 **Python** + **Conda** 環境管理
 - 設定 **GitHub PAT**（個人存取權杖）
 - 認識 Git、依賴管理等基本概念
+- 透過 API 存取 LLM 服務，並利用 Jupyter Notebook 製作簡易 Chatbot（[`connect_to_api.ipynb`](00_simple_chatbot/connect_to_api.ipynb)）
 
 ---
 

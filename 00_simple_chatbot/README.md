@@ -402,6 +402,8 @@ conda activate socialrobot
 
 ## 6. 設定 GitHub PAT
 
+![alt text](how_it_works.png)
+
 ### 步驟 1：產生 PAT
 
 1. 登入 GitHub
