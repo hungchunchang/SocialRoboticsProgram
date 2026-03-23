@@ -5,28 +5,8 @@ NTU Social Lab 內部培訓工作坊教材。
 
 ---
 
-## 00 - 開始之前
 
-在進入任何專案之前，請先完成以下環境建置。
-
-### 取得教材
-
-**方法一：下載 ZIP（不需要 Git）**
-
-1. 前往 [GitHub 頁面](https://github.com/hungchunchang/SocialRoboticsProgram)
-2. 點擊綠色的 **Code** 按鈕 → **Download ZIP**
-3. 解壓縮到你想要的位置
-
-**方法二：使用 Git Clone（推薦）**
-
-1. 安裝 Git：前往 [git-scm.com](https://git-scm.com) 下載並安裝
-2. 打開終端機，進入想存放的資料夾，執行：
-
-```bash
-git clone https://github.com/hungchunchang/SocialRoboticsProgram.git
-```
-
-### 環境建置
+## 開始：環境建置
 
 詳細步驟請參考 [`00_simple_chatbot/README.md`](00_simple_chatbot/README.md)，包含：
 
