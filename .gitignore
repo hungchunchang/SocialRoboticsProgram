@@ -6,8 +6,52 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# env
 .env
 *.png
 *.pdf
 .claude
 *.docx
+
+
+# # Built objects
+*.pydevproject
+.project
+.metadata
+bin/
+gen/
+out/
+build/
+
+# Gradle cache
+.gradle/
+
+# Local configuration file (SDK paths, etc.)
+local.properties
+
+# Proguard files
+proguard/
+
+# Log files
+*.log
+
+# Android Studio / IntelliJ files
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+.idea/modules.xml
+.idea/deploymentTargetDropDown.xml
+*.iml
+
+# Keystore files (Keep your keys private!)
+*.jks
+*.keystore
+
+# External native build artifacts
+.externalNativeBuild
+.cxx/
