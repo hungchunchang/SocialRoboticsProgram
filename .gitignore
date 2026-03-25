@@ -55,3 +55,5 @@ proguard/
 # External native build artifacts
 .externalNativeBuild
 .cxx/
+
+.frontend_apps/

@@ -1,6 +1,0 @@
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- 被選擇時 -->
-    <item android:state_selected="true" android:drawable="@drawable/button_selected" />
-    <!-- 默認狀態（未選擇時） -->
-    <item android:drawable="@drawable/button_default" />
-</selector>
