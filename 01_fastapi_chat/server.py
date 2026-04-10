@@ -20,7 +20,7 @@ from openai import OpenAI
 # 載入環境變數
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
+google_api = 
 app = FastAPI(title="Social Robot Chat Server")
 
 # 啟用 CORS，允許 App 或瀏覽器連線
