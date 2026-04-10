@@ -15,11 +15,17 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from openai import OpenAI
+import google.generativeai as genai
 
 # 載入環境變數
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+api_key = os.getenv("GEMINI_API_KEY")
+# 2. 設定 API 金鑰
+genai.configure(api_key=api_key)
+
+# 3. 初始化模型 (推薦使用 gemini-2.5-flash，速度快且便宜/免費)
+model = genai.GenerativeModel("gemini-2.5-flash")
+# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = FastAPI(title="Social Robot Chat Server")
 
@@ -71,27 +77,14 @@ def chat(req: ChatRequest):
 
     # 呼叫 OpenAI API
     try:
-        completion = client.chat.completions.create(
-            model="gpt-4o",
-            messages=messages,
-            max_tokens=300,
-        )
-        raw = completion.choices[0].message.content
-
-        # 嘗試解析 JSON
-        try:
-            json_text = raw.replace("```json", "").replace("```", "").strip()
-            data = json.loads(json_text)
-            reply = data.get("reply", raw)
-            is_ended = data.get("is_ended", False)
-        except json.JSONDecodeError:
-            reply = raw
-            is_ended = False
+        response = model.generate_content(messages)
+        reply = response.text
 
         # 儲存助手回覆
         history.append({"role": "assistant", "content": reply})
 
-        return ChatResponse(reply=reply, is_ended=is_ended)
+        # is_ended= False
+        return ChatResponse(reply=reply, is_ended=False)
 
     except Exception as e:
         return ChatResponse(reply=f"發生錯誤：{str(e)}", is_ended=False)
