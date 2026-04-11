@@ -95,14 +95,12 @@ def create_tts(provider: str, voice: str):
             api_key=os.getenv("ELEVENLABS_API_KEY", ""),
             voice_id=voice,
         )
-    elif provider == "openai":
+    else:
         from pipecat.services.openai import OpenAITTSService
         return OpenAITTSService(
             api_key=os.getenv("OPENAI_API_KEY", ""),
             voice=voice,
         )
-    else:
-        raise ValueError(f"Unknown TTS provider: {provider}")
 
 
 def create_vad():
