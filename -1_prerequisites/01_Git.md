@@ -37,14 +37,14 @@ git clone https://github.com/hungchunchang/SocialRoboticsProgram.git
 - 新增一個 branch
 
 ```sh
-git checkout -b my-feature
+git checkout -b <my-feature>
 ```
 
 - 在這邊進行更改，並不會影響到 main branch 上的檔案。在完成開發後：
 - 情境一：將檔案推送到原本的倉庫中：
 
 ```sh
-git push origin my-feature
+git push origin <my-feature>
 ```
 
 在 github 上建立 pull request，會由負責人進行審查，再決定是否要合併你提交的更新。

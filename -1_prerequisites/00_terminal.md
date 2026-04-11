@@ -4,7 +4,7 @@
 
 文字使用者介面（text user interface）與圖形使用者介面（graphic user interface）是兩種現在主流的使用者介面。最直觀的對比，就是透過檔案/Finder（GUI），以及終端機（TUI）查看文件。
 
-文字使用者介面不僅大量被軟體開發者使用，在 AI 崛起的時代，想要更進階的使用 AI、將大語言模型整合進自己的工作流程，使用命令列工具 (command line tool, cli) 會更加方便容易，例如 Ahthropic 的 Claude Code, OpenAI 的 CodeX 或是 Google 的 Gemini 都提供了 cli 也就是文字使用者介面，讓 AI 能夠直接在你的終端機操作你的電腦。
+文字使用者介面不僅大量被軟體開發者使用，在 AI 崛起的時代，想要更進階的使用 AI、將大語言模型整合進自己的工作流程，使用命令列工具 (command line tool, cli) 會更加方便容易，例如 Anthropic 的 Claude Code, OpenAI 的 CodeX 或是 Google 的 Gemini 都提供了 cli 也就是文字使用者介面，讓 AI 能夠直接在你的終端機操作你的電腦。
 
 最早的 TUI 是 cli ，在cli中，使用者只能透過文字輸入指令，並且獲得一對一的回應，例如在終端機輸入：
 
@@ -42,6 +42,12 @@ graph TD
 
 圖：Windows 的檔案系統
 
+範例：
+
+```sh
+cd C:\Users\Username\Documents\
+```
+
 ```mermaid
 graph TD
     Root["/ (Root 根目錄)"]
@@ -58,6 +64,10 @@ graph TD
     User1 --> Documents["Documents (文件)"]
     User1 --> Downloads["Downloads (下載)"]
     User1 --> Lib2["Library (個人設定/快取 - 隱藏)"]
+```
+
+```sh
+cd ~/Users/Username/Documents
 ```
 
 圖：MacOS 的檔案系統
@@ -109,6 +119,11 @@ dir
 當你想在目前的目錄下生出一個新的資料夾時，使用 mkdir (make kildirectory)。用法：
 
 - `mkdir <新資料夾名稱>`
+- `nano test.py`: 這是一個文字編輯器
+  - ctrl + o: 寫入
+  - enter 確認存檔位置
+  - ctrl + x: 離開編輯器
+- `cat test.py`: concatenate
 
 操作練習：如果你想在 Documents 裡建立一個名為 Project 的資料夾：cd Documents (先進入文件)mkdir Project (建立資料夾)
 
@@ -152,6 +167,7 @@ dir
 ### 2. 相對路徑 (Relative Path)
 
 相對路徑是指從你目前所在位置 (Current Working Directory)*- 出發的路徑。它會隨著你目前「人在哪裡」而改變路徑的意義。
+用github演示
 
 為了描述相對關係，你需要認識兩個特殊的符號：
 
