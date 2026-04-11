@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+
+# 環境變數
+.env
+
+# 日誌
+*.log
+
+# 數據文件 - 保留提示詞，排除對話數據
+data/conversation/*
+!data/conversation/.gitkeep
+!data/prompt/
+
+# Docker
+.docker/
