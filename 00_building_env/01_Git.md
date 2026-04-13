@@ -6,8 +6,16 @@
 
 ![how git works](materials/git.png)
 
-- 一個由 .git 檔案進行版本控制的資料夾，會稱為一個倉庫（repository, or repo）
-- 這個倉庫可以只純在本機，或是上傳到 Github 並且兩者同步更新，可以將 Github 理解成雲端硬碟的角色
+- 一個由 .git 檔案進行版本控制的資料夾，會稱為一個倉庫（repository, or repo），這個倉庫中的檔案會由 git 執行
+  - 版本控制
+  - 追蹤檔案的每次修改
+  - 可以回到任何一個歷史快照版本（每一次commit）
+  - 在本機上運作
+- 這個倉庫可以只純在本機，或是上傳到 Github 並且兩者同步更新，
+  - 可以將 Github 理解成雲端硬碟的角色
+  - 可以將程式碼放在網路上和他人協作
+
+> Git 管理版本，GitHub 負責分享與協作。
 
 ### 對於一個倉庫，你可以
 
@@ -24,17 +32,35 @@
 
 ## 使用範例
 
-在實際使用上，你有可能（一）從Github下載別人已經寫好的程式；或是（二）創建一個新的倉庫。
+在實際使用上，你有可能（一）從Github下載別人已經寫好的程式；（二）更新本機上的程式碼。
 
-### 從 Github 下載已經寫好的程式
+### （一）從 Github 下載已經寫好的程式
 
-- 打開終端機，進入你希望資料儲存的位置（上層資料夾名稱盡量不要有中文、空格），輸入：
+- 桌面版和終端機二選一即可
 
-```sh
+#### 使用桌面版
+
+- 登入後，選擇「clone a Repository from the internet」
+- 選擇 URL, 貼上 `https://github.com/hungchunchang/SocialRoboticsProgram.git`
+- `Local Path` 欄位可以選擇自己想要存放檔案的位置（上層資料夾名稱盡量不要有中文、空格）
+- 選擇右下角 `clone` 按鈕
+- 複製完成之後，點選 `Open in Visual Studio Code`
+
+#### 使用終端機
+
+打開終端機，進入你希望資料儲存的位置（上層資料夾名稱盡量不要有中文、空格），輸入：
+
+```bash
 git clone https://github.com/hungchunchang/SocialRoboticsProgram.git
 ```
 
-- [text](https://excalidraw.com/#json=VCCuDY6fH9WRAVcIeNseY,1zcF3f7EU8FSrPUg7jKcWA)
+然後在 VSCode 中開啟這個資料夾！
+
+note: `git clone` = 把 GitHub 上的專案完整複製到你的電腦。
+
+### （二）一套標準的更新流程
+
+![update git](materials/git_update.png)
 
 - 新增一個 branch
 
@@ -67,11 +93,6 @@ git checkout <my-feature>
 git rebase main
 
 這會把你在 feature 分支上尚未合併（或新寫）的 commit，重新接在剛才拉下來的最新 main 之後。
-
-### 創建一個新的倉庫
-
-```sh
-git init
 ```
 
 ## 參考影片
