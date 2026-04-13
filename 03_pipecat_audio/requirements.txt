@@ -1,5 +1,0 @@
-pipecat-ai[silero,openai,deepgram,elevenlabs,websocket]
-fastapi
-uvicorn[standard]
-python-dotenv
-anthropic

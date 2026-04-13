@@ -9,7 +9,6 @@ Thumbs.db
 
 # env
 .env
-*.png
 *.pdf
 .claude
 *.docx
@@ -37,20 +36,33 @@ proguard/
 *.log
 
 # Android Studio / IntelliJ files
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/gradle.xml
-.idea/assetWizardSettings.xml
-.idea/dictionaries
-.idea/libraries
-.idea/caches
-.idea/modules.xml
-.idea/deploymentTargetDropDown.xml
 *.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+app/gradlew.bat
+
 
 # Keystore files (Keep your keys private!)
-*.jks
 *.keystore
+*.jks
+*.keystore.*
+*.jks.*
+*.log
+*.orig
+*.rej
+*.swp
 
 # External native build artifacts
 .externalNativeBuild

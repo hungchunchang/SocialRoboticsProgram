@@ -1,5 +1,0 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/button_background_unselected" /> <!-- 背景白色 -->
-    <stroke android:width="2dp" android:color="@color/button_border_unselected" /> <!-- 藍色邊框 -->
-    <corners android:radius="8dp" /> <!-- 圓角設置 -->
-</shape>

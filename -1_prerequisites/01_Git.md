@@ -4,7 +4,7 @@
 
 ## 簡介 Git 的工作方式
 
-![alt text](../00_simple_chatbot/materials/git.png)
+![how git works](materials/git.png)
 
 - 一個由 .git 檔案進行版本控制的資料夾，會稱為一個倉庫（repository, or repo）
 - 這個倉庫可以只純在本機，或是上傳到 Github 並且兩者同步更新，可以將 Github 理解成雲端硬碟的角色
@@ -34,6 +34,8 @@
 git clone https://github.com/hungchunchang/SocialRoboticsProgram.git
 ```
 
+- [text](https://excalidraw.com/#json=VCCuDY6fH9WRAVcIeNseY,1zcF3f7EU8FSrPUg7jKcWA)
+
 - 新增一個 branch
 
 ```sh
@@ -61,11 +63,10 @@ git pull origin main
 如果你這個 feature 分支的任務還沒結束，或者你想基於最新的 main 繼續寫，這時就要進行 Rebase：
 
 ```Bash
-git checkout feature
+git checkout <my-feature>
 git rebase main
-```
 
-這會把你在 feature 分支上尚未合併（或新寫）的 Commit，重新接在剛才拉下來的最新 main 之後。
+這會把你在 feature 分支上尚未合併（或新寫）的 commit，重新接在剛才拉下來的最新 main 之後。
 
 ### 創建一個新的倉庫
 
