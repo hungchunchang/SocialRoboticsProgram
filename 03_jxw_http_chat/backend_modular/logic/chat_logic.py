@@ -1,99 +1,147 @@
 import json
+import re
 from datetime import datetime
-from config import client
+from config import OPENAI_MODEL, get_openai_client
 from utils.helpers import load_user_data, save_user_data, read_prompt, get_intro_text
-from models.data_structures import Message
+from models.data_structures import ChatResponse, MessageRecord, UserData, VALID_EMOTIONS
 
-def jxw_bot(user_name, question):
-    """與AI互動，生成回覆"""
-    # 獲取用戶資料
-    user_data = load_user_data(user_name)
-    
-    # 生成對話歷史文本
-    history = ""
-    for msg in user_data.conversation:
-        history += f"{msg.timestamp} | {msg.speaker}: {msg.message}\n"
-    
-    turns = user_data.turns
-    intro_text = get_intro_text()
-    
+
+def get_stage_name(turns: int) -> str:
     if turns <= 2:
-        # 知識問答環節
+        return "knowledge_quiz"
+    if turns <= 7:
+        return "experience_interview"
+    if turns == 8:
+        return "museum_day_question"
+    if turns == 9:
+        return "museum_day_answer"
+    return "completed"
+
+
+def build_system_prompt(user_data: UserData) -> str | None:
+    history = "".join(
+        f"{msg.timestamp} | {msg.speaker}: {msg.message}\n"
+        for msg in user_data.conversation
+    )
+    intro_text = get_intro_text()
+    turns = user_data.turns
+
+    if turns <= 2:
         template = read_prompt('system_prompt_template.txt')
-        system_prompt = template.format(
-            intro=intro_text, 
-            context=history
-        )
-    elif turns > 2 and turns <= 7:
-        # 使用訪談提示
+        return template.format(intro=intro_text, context=history)
+    if turns <= 7:
         template = read_prompt('interview_prompt.txt')
-        system_prompt = template.format(
-            context=history
-        )
-    elif turns == 8:
+        return template.format(context=history)
+    if turns == 8:
         template = read_prompt('international_musemu_day.txt')
-        system_prompt = template.format(
-            context=history
-        )
-    elif turns == 9:
+        return template.format(context=history)
+    if turns == 9:
         template = read_prompt('international_musemu_day_ans.txt')
-        system_prompt = template.format(
-            context=history
+        return template.format(context=history)
+    return None
+
+
+def parse_init_message(message: str) -> tuple[bool, str]:
+    """Check if message is an init command. Returns (is_init, nickname)."""
+    msg = message.strip()
+    if msg == "init":
+        return True, ""
+    match = re.match(r"^init[_\s](.+)$", msg)
+    if match:
+        return True, match.group(1).strip()
+    return False, ""
+
+
+def parse_model_reply(raw_text: str) -> tuple[str, str, bool]:
+    """Parse model reply. Returns (reply_text, emotion, is_ended)."""
+    try:
+        json_text = raw_text.replace('```json', '').replace('```', '').strip()
+        data = json.loads(json_text)
+        reply_text = data.get("reply") or data.get("question") or raw_text
+        emotion = data.get("emotion", "neutral")
+        if emotion not in VALID_EMOTIONS:
+            emotion = "neutral"
+        return reply_text, emotion, bool(data.get("is_ended", False))
+    except json.JSONDecodeError:
+        return raw_text, "neutral", False
+
+
+def handle_init(user_name: str, nickname: str) -> ChatResponse:
+    """Reset user data and return a greeting."""
+    user_data = UserData(nickname=nickname)
+    save_user_data(user_name, user_data)
+    greeting = f"你好{nickname}！" if nickname else "你好！"
+    greeting += "歡迎來到磯永吉小屋，我是機器人阿蓬。準備好開始了嗎？"
+    return ChatResponse(
+        reply=greeting,
+        question=greeting,
+        emotion="joy",
+        turn_index=0,
+        current_stage="init",
+        is_ended=False,
+    )
+
+
+def generate_bot_reply(user_name: str, question: str) -> ChatResponse:
+    # Check for init command
+    is_init, nickname = parse_init_message(question)
+    if is_init:
+        return handle_init(user_name, nickname)
+
+    user_data = load_user_data(user_name)
+    current_stage = get_stage_name(user_data.turns)
+
+    if user_data.is_ended or current_stage == "completed":
+        return ChatResponse(
+            reply="謝謝你們今天來參觀！期待下次再見！",
+            question="謝謝你們今天來參觀！期待下次再見！",
+            emotion="joy",
+            turn_index=user_data.turns,
+            current_stage="completed",
+            is_ended=True,
         )
-    elif turns >= 10:
-        # 如果對話結束，返回結束訊息
-        return {
-            "question": "謝謝你們今天來參觀！期待下次再見！",
-            "is_ended": True
-        }
-    
-    # 生成AI回覆
+
+    system_prompt = build_system_prompt(user_data)
+    client = get_openai_client()
+    emotion = "neutral"
+
     try:
         completion = client.chat.completions.create(
-            model="gpt-4o",
+            model=OPENAI_MODEL,
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": "參與者回應道：" + question},
+                {"role": "user", "content": f"參與者回應道：{question}"},
             ],
-            max_tokens=500,
+            response_format={"type": "json_object"},
         )
-        
-        raw = completion.choices[0].message.content
-        # 嘗試解析JSON
-        try:
-            # 移除可能的Markdown格式
-            json_text = raw.replace('```json', '').replace('```', '').strip()
-            data = json.loads(json_text)
-            
-            # 更新用戶資料
-            if data.get("is_ended", False):
-                user_data.is_ended = True
-            user_data.turns += 1
-        
-            save_user_data(user_name, user_data)
-            return data
-        except json.JSONDecodeError:
-            # 如果無法解析JSON，返回原始文本作為問題
-            return {
-                "question": raw,
-                "is_ended": False
-            }
+        raw_text = completion.choices[0].message.content or ""
+        reply_text, emotion, model_ended = parse_model_reply(raw_text)
     except Exception as e:
-        print(f"錯誤: {e}")
-        return {
-            "question": "抱歉，我遇到了一些問題，請稍後再試。",
-            "is_ended": False
-        }
+        reply_text = f"抱歉，我遇到了一些問題，請稍後再試。({e})"
+        model_ended = False
 
-def save_message_service(user_name, speaker, message):
-    """儲存訊息並更新用戶資料"""
+    user_data.turns += 1
+    user_data.is_ended = model_ended or user_data.turns >= 10
+    save_user_data(user_name, user_data)
+
+    return ChatResponse(
+        reply=reply_text,
+        question=reply_text,
+        emotion=emotion,
+        turn_index=user_data.turns,
+        current_stage=current_stage,
+        is_ended=user_data.is_ended,
+    )
+
+def save_message_service(user_name: str, speaker: str, message: str) -> UserData:
     user_data = load_user_data(user_name)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    new_message = Message(
+
+    new_message = MessageRecord(
         timestamp=timestamp,
         speaker=speaker,
         message=message
     )
     user_data.conversation.append(new_message)
     save_user_data(user_name, user_data)
+    return user_data

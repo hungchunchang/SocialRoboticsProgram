@@ -4,4 +4,5 @@
 
 回答的格式為 json 格式，並包含：
 1. question(string) - 你對參與者的回應以及問題
-2. is_ended(bool) - 對話是否結束
+2. emotion(string) - 你目前的情緒，必須是以下其中之一：neutral, joy, sad, angry, surprise, scared, disgusted
+3. is_ended(bool) - 對話是否結束

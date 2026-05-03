@@ -1,67 +1,46 @@
 import uuid
-from datetime import datetime
-from flask import Blueprint, request, jsonify
-from logic.chat_logic import jxw_bot, save_message_service
-from utils.helpers import save_user_data, UserData
+from fastapi import APIRouter
 
-chat_bp = Blueprint('chat', __name__)
+from logic.chat_logic import generate_bot_reply, save_message_service, parse_init_message
+from models.data_structures import (
+    ChatRequest,
+    ChatResponse,
+    CreateUserResponse,
+    HealthResponse,
+    ResetRequest,
+    UserData,
+)
+from utils.helpers import save_user_data
 
-@chat_bp.route('/chat', methods=['POST'])
-def chat():
-    """處理聊天請求"""
-    data = request.json
-    user_message = data.get('message', '')
-    user_name = data.get('user_name')
-    
-    # 驗證必要參數
-    if not user_message:
-        return jsonify({"error": "訊息不能為空"}), 400
-    if not user_name:
-        return jsonify({"error": "用戶名稱不能為空"}), 400
-        
-    timestamp_1 = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"{timestamp_1}| 使用者 {user_name} 發送訊息: {user_message}")
-    
-    # 儲存用戶訊息
-    save_message_service(user_name, "user", user_message)
-    
-    # 獲取機器人回覆
-    response = jxw_bot(user_name, user_message)
-    
-    timestamp_2 = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"{timestamp_2}| 機器人回覆: {response['question']}")
-    
-    # 儲存機器人回覆
-    save_message_service(user_name, "bot", response["question"])
-    
-    return jsonify(response)
+router = APIRouter(prefix="/api", tags=["chat"])
 
-@chat_bp.route('/reset', methods=['POST'])
-def reset_chat():
-    """重置聊天"""
-    data = request.json
-    user_name = data.get('user_name')
-    
-    if not user_name:
-        return jsonify({"error": "用戶名稱不能為空"}), 400
-    
-    # 重置用戶資料
-    user_data = UserData()
-    save_user_data(user_name, user_data)
-    
-    return jsonify({"status": "success"})
 
-@chat_bp.route('/create_user', methods=['POST'])
-def create_user():
-    """創建新用戶"""
+@router.post("/chat", response_model=ChatResponse)
+def chat(req: ChatRequest) -> ChatResponse:
+    is_init, _ = parse_init_message(req.message)
+    if is_init:
+        # init resets the session; don't log "init" as a conversation message
+        return generate_bot_reply(req.user_name, req.message)
+
+    save_message_service(req.user_name, "user", req.message)
+    response = generate_bot_reply(req.user_name, req.message)
+    save_message_service(req.user_name, "bot", response.reply)
+    return response
+
+
+@router.post("/reset")
+def reset_chat(req: ResetRequest) -> dict[str, str]:
+    save_user_data(req.user_name, UserData())
+    return {"status": "success"}
+
+
+@router.post("/create_user", response_model=CreateUserResponse)
+def create_user() -> CreateUserResponse:
     new_user_name = str(uuid.uuid4())
-    
-    # 初始化用戶資料
-    user_data = UserData()
-    save_user_data(new_user_name, user_data)
-    
-    return jsonify({"user_name": new_user_name})
+    save_user_data(new_user_name, UserData())
+    return CreateUserResponse(user_name=new_user_name)
 
-@chat_bp.route('/health', methods=['GET'])
-def health():
-    return jsonify({"status": "healthy"})
+
+@router.get("/health", response_model=HealthResponse)
+def health() -> HealthResponse:
+    return HealthResponse(status="healthy")

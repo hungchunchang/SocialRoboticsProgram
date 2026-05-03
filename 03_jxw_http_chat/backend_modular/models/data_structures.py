@@ -1,44 +1,43 @@
-from dataclasses import dataclass, field
-from typing import List, Optional
+from pydantic import BaseModel, Field
 
-@dataclass
-class Message:
+
+class MessageRecord(BaseModel):
     timestamp: str
     speaker: str
     message: str
 
-    def to_dict(self):
-        return {
-            "timestamp": self.timestamp,
-            "speaker": self.speaker,
-            "message": self.message
-        }
 
-@dataclass
-class UserData:
+class UserData(BaseModel):
     turns: int = 0
-    conversation: List[Message] = field(default_factory=list)
+    conversation: list[MessageRecord] = Field(default_factory=list)
+    is_ended: bool = False
+    nickname: str = ""
+
+
+class ChatRequest(BaseModel):
+    message: str = Field(..., min_length=1)
+    user_name: str = Field(..., min_length=1)
+
+
+class ResetRequest(BaseModel):
+    user_name: str = Field(..., min_length=1)
+
+
+class CreateUserResponse(BaseModel):
+    user_name: str
+
+
+VALID_EMOTIONS = {"neutral", "angry", "joy", "sad", "surprise", "scared", "disgusted"}
+
+
+class ChatResponse(BaseModel):
+    reply: str
+    question: str
+    emotion: str = "neutral"
+    turn_index: int
+    current_stage: str
     is_ended: bool = False
 
-    def to_dict(self):
-        return {
-            "turns": self.turns,
-            "conversation": [m.to_dict() for m in self.conversation],
-            "is_ended": self.is_ended
-        }
 
-    @classmethod
-    def from_dict(cls, data: dict):
-        messages = [
-            Message(
-                timestamp=m["timestamp"],
-                speaker=m["speaker"],
-                message=m["message"]
-            )
-            for m in data.get("conversation", [])
-        ]
-        return cls(
-            turns=data.get("turns", 0),
-            conversation=messages,
-            is_ended=data.get("is_ended", False)
-        )
+class HealthResponse(BaseModel):
+    status: str
