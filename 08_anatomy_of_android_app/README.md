@@ -783,6 +783,159 @@ VideoCallActivity.onCreate()
 
 ---
 
+## Ch2 HTTP Chat 連線 03 後端
+
+---
+
+## 連線架構
+
+Ch2（HTTP Chat）可以直接搭配 `03_jxw_http_chat/backend_modular` 使用。
+
+```text
+Android App (Ch2)                    03 後端 (FastAPI)
+┌──────────────┐                    ┌──────────────────┐
+│ HttpChat     │  POST /api/chat    │ backend_modular/ │
+│ Activity     │ ──────────────►    │                  │
+│              │                    │  話輪流程控制     │
+│  OkHttp3     │ ◄────────────────  │  emotion 回傳    │
+│              │  JSON response     │  JSON 持久化     │
+└──────────────┘                    └──────────────────┘
+```
+
+---
+
+## App 發送的 JSON
+
+```kotlin
+// HttpChatActivity.kt 中的 sendToBackend()
+val json = JSONObject().apply {
+    put("message", message)         // 使用者說的話
+    put("user_name", userName)      // 固定 "android_user"
+    put("user_id", userName)        // 03 後端會忽略
+    put("robot_mbti", "E")          // 03 後端會忽略
+}
+```
+
+03 後端的 `ChatRequest` 只需要 `message` 和 `user_name`，多餘欄位會自動忽略。
+
+---
+
+## 後端回傳的 JSON
+
+```json
+{
+  "reply": "你好小明！歡迎來到磯永吉小屋...",
+  "question": "你好小明！歡迎來到磯永吉小屋...",
+  "emotion": "joy",
+  "turn_index": 0,
+  "current_stage": "init",
+  "is_ended": false
+}
+```
+
+App 讀取的欄位：
+
+| 欄位 | App 怎麼用 |
+|------|-----------|
+| `question` | 機器人 TTS 說出的文字 |
+| `emotion` | 播放對應的表情影片（neutral / joy / sad / angry / surprise / scared / disgusted） |
+| `is_ended` | `true` 時播放告別動作，結束對話 |
+
+App 不會用到 `reply`、`turn_index`、`current_stage`，但這些欄位不會造成問題。
+
+---
+
+## 用 init 指令啟動對話
+
+03 後端支援用訊息內容觸發對話初始化，不需要另外呼叫 `/api/create_user`。
+
+| App 送出的 message | 後端行為 |
+|---|---|
+| `init` | 重置對話紀錄，回傳開場白 |
+| `init_小明` | 重置對話 + 記住暱稱，回傳「你好小明！」 |
+| 其他文字 | 正常話輪流程 |
+
+<div class="highlight">
+
+**搭配 auto-hello 使用**：進入 Ch2 時開啟 auto-hello，初始訊息填 `init` 或 `init_小明`。
+App 啟動後會自動送出這句話，後端收到就重置對話並回傳開場白，機器人立刻開口。
+
+</div>
+
+---
+
+## 對話流程示意
+
+```text
+App 啟動（auto-hello = "init_小明"）
+  │
+  ├─► POST {message: "init_小明"}
+  │   ◄── {question: "你好小明！...", emotion: "joy", is_ended: false}
+  │   → 機器人說開場白、播放 joy 表情
+  │
+  ├─► 使用者回答 → POST {message: "..."}
+  │   ◄── {question: "...", emotion: "neutral", turn_index: 1, current_stage: "knowledge_quiz"}
+  │   → 知識問答階段（turn 0-2）
+  │
+  ├─► ...（繼續對話）
+  │   → 參觀訪談階段（turn 3-7）
+  │   → 博物館日問答（turn 8-9）
+  │
+  └─► 最後一輪
+      ◄── {question: "謝謝你們！...", emotion: "joy", is_ended: true}
+      → 機器人說再見、播放 bye 動作、回到主畫面
+```
+
+---
+
+## 連線設定
+
+### 1. 啟動 03 後端
+
+```bash
+cd 03_jxw_http_chat/backend_modular
+uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+```
+
+### 2. App 設定
+
+在 App 的 Settings 頁面，把 HTTP URL 改成：
+
+```
+http://你的電腦IP:8080
+```
+
+<div class="highlight">
+
+**注意**：App 預設 port 是 `8000`，03 後端預設 `8080`，記得改。
+確保手機和電腦在**同一個 Wi-Fi 網路**。
+
+</div>
+
+### 3. 啟動 Ch2 HTTP Chat
+
+- 開啟 auto-hello
+- 初始訊息填 `init` 或 `init_你的名字`
+- 開始對話
+
+---
+
+## emotion 表情對照
+
+後端回傳的 `emotion` 會對應到機器人的表情影片：
+
+| emotion | 外向型 (E) | 內向型 (I) | 適用情境 |
+|---------|-----------|-----------|---------|
+| `neutral` | e_neutral_s | i_neutral_s | 一般對話 |
+| `joy` | e_joy_s | i_joy_s | 鼓勵、開場、結尾 |
+| `sad` | e_sad_n | i_sad_n | 同情、遺憾 |
+| `angry` | e_angry_s | i_angry_s | 糾正錯誤 |
+| `surprise` | e_surprise_s | i_surprise_s | 驚訝、有趣的回答 |
+| `scared` | e_scared_s | i_scared_s | 緊張 |
+| `disgusted` | e_disgusted_n | i_disgusted_n | 不認同 |
+
+---
+
 ## 重點回顧
 
 <div class="tricolumns">
@@ -808,6 +961,34 @@ VideoCallActivity.onCreate()
 **狀態驅動 UI**
 
 少數變數控制畫面，狀態改變就呼叫 `updateUIState()`
+
+</div>
+
+</div>
+
+<div class="tricolumns">
+
+<div class="info-card">
+
+**Ch2 ↔ 03 後端**
+
+`init` 指令啟動、`emotion` 驅動表情、`is_ended` 控制結束
+
+</div>
+
+<div class="info-card">
+
+**auto-hello**
+
+初始訊息設 `init_名字`，App 啟動即開始對話
+
+</div>
+
+<div class="info-card">
+
+**Port 設定**
+
+03 後端用 `8080`，App Settings 記得改
 
 </div>
 

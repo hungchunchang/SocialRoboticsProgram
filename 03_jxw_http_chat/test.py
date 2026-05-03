@@ -3,8 +3,7 @@ import json
 import time
 import uuid
 
-# API 端點
-url = "http://140.112.92.133:8080/api/chat"
+url = "http://127.0.0.1:8080/api/chat"
 
 # 請求標頭
 headers = {
@@ -13,24 +12,26 @@ headers = {
 
 uid = str(uuid.uuid4())
 
-# 請求內容
-data = {
-    "user_name": uid,
-    "message": "沒有"
-}
+# 請求內容：第一句用 init 啟動，之後正常對話
+messages = [
+    "init_小明",
+    "你好",
+    "我記得有提到農業研究",
+    "是磯永吉",
+    "我印象最深的是育種故事",
+    "會，我想推薦朋友來",
+    "目前沒有其他問題",
+]
 
-# 發送 10 次請求
 for i in range(12):
+    data = {
+        "user_name": uid,
+        "message": messages[min(i, len(messages) - 1)]
+    }
     try:
-        # 發送 POST 請求
         response = requests.post(url, headers=headers, json=data)
-        
-        # 檢查請求是否成功
         if response.status_code == 200:
-            # 解析 JSON 回應
             result = response.json()
-            
-            # 格式化輸出回應
             print(f"請求 #{i+1} 成功:")
             print(json.dumps(result, ensure_ascii=False, indent=2))
         else:
@@ -39,9 +40,6 @@ for i in range(12):
     
     except Exception as e:
         print(f"請求 #{i+1} 發生錯誤: {str(e)}")
-    
-    # 暫停一秒，避免過快發送請求
+
     time.sleep(1)
-    
-    # 分隔線
     print("-" * 50)

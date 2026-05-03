@@ -1,16 +1,23 @@
-from flask import Flask
-from flask_cors import CORS
-from api.chat_api import chat_bp
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from api.chat_api import router
 from utils.helpers import ensure_dirs
 
-def create_app():
-    app = Flask(__name__)
-    CORS(app)
-    
-    # 確保資料目錄存在
+
+def create_app() -> FastAPI:
     ensure_dirs()
-    
-    # 註冊 API 路由
-    app.register_blueprint(chat_bp, url_prefix='/api')
-    
+
+    app = FastAPI(
+        title="03 FastAPI Turn-Based Chatbot",
+        description="Extend 02_fastapi_chat with turn-based flow control and persistent conversation storage.",
+        version="1.0.0",
+    )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    app.include_router(router)
     return app
