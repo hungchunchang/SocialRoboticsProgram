@@ -1,0 +1,8 @@
+requests
+python-dotenv
+fastapi
+websockets
+uvicorn
+torch
+torchaudio
+numpy

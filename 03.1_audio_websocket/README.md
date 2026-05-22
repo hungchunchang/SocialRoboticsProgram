@@ -1,4 +1,4 @@
-# Pipecat Audio Backend
+# 03.1 Audio Backend (Pipecat 版)
 
 本專案是一個基於 **Pipecat** 框架的可設定語音 AI Pipeline，專為 Social Robotics Program 設計。它提供了一個可彈性配置的後端，支援多種語音轉文字 (STT)、大型語言模型 (LLM) 以及文字轉語音 (TTS) 服務。
 
