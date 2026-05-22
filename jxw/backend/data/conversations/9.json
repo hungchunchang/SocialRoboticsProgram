@@ -1,0 +1,116 @@
+{
+  "turns": 7,
+  "conversation": [
+    {
+      "timestamp": "2025-04-11 11:41:46",
+      "speaker": "user",
+      "message": "hi"
+    },
+    {
+      "timestamp": "2025-04-11 11:41:49",
+      "speaker": "bot",
+      "message": "你好，我是阿蓬！今天我們要聊聊你參觀磯小屋的經驗。首先，我想問你一個問題：磯小屋原本是作為什麼用途的呢？"
+    },
+    {
+      "timestamp": "2025-04-11 11:42:48",
+      "speaker": "user",
+      "message": "大鵬"
+    },
+    {
+      "timestamp": "2025-04-11 11:42:53",
+      "speaker": "bot",
+      "message": "其實磯小屋原本是作為學生實習農場使用，後來併入臺北帝國大學附屬農林部，繼續作為田間實習與考種實驗室。那麼，我們接下來來問下個問題：磯永吉在磯小屋裡主要進行了什麼農業研究呢？"
+    },
+    {
+      "timestamp": "2025-04-11 11:43:20",
+      "speaker": "user",
+      "message": "我愛你"
+    },
+    {
+      "timestamp": "2025-04-11 11:43:23",
+      "speaker": "bot",
+      "message": "能感受到你的熱情！但是我們回到磯小屋的話題上，磯永吉在磯小屋裡主要進行了什麼農業研究呢？"
+    },
+    {
+      "timestamp": "2025-04-11 11:43:40",
+      "speaker": "user",
+      "message": "稻米研究"
+    },
+    {
+      "timestamp": "2025-04-11 11:43:42",
+      "speaker": "bot",
+      "message": "是的，磯永吉在磯小屋主要進行了稻米研究，開發出更高產的品種呢！那麼今天參觀下來，有沒有讓你印象特別深刻的事情呢？"
+    },
+    {
+      "timestamp": "2025-04-11 11:46:56",
+      "speaker": "user",
+      "message": "這邊"
+    },
+    {
+      "timestamp": "2025-04-11 11:46:58",
+      "speaker": "bot",
+      "message": "請問今天參觀中，有哪個部分或事情讓你印象特別深刻呢？"
+    },
+    {
+      "timestamp": "2025-04-11 11:48:45",
+      "speaker": "user",
+      "message": "Hello Kebbi"
+    },
+    {
+      "timestamp": "2025-04-11 11:48:47",
+      "speaker": "bot",
+      "message": "你好啊！請問今天參觀中，有哪個部分或事情讓你印象特別深刻呢？"
+    },
+    {
+      "timestamp": "2025-04-11 12:01:44",
+      "speaker": "user",
+      "message": "hi"
+    },
+    {
+      "timestamp": "2025-04-11 12:01:46",
+      "speaker": "bot",
+      "message": "請問今天參觀中，有哪個部分或事情讓你印象特別深刻呢？"
+    },
+    {
+      "timestamp": "2025-04-11 12:02:13",
+      "speaker": "user",
+      "message": "生命週期"
+    },
+    {
+      "timestamp": "2025-04-11 12:02:13",
+      "speaker": "bot",
+      "message": "謝謝你們今天來參觀！期待下次再見！"
+    },
+    {
+      "timestamp": "2025-04-11 12:02:25",
+      "speaker": "user",
+      "message": "hi"
+    },
+    {
+      "timestamp": "2025-04-11 12:02:25",
+      "speaker": "bot",
+      "message": "謝謝你們今天來參觀！期待下次再見！"
+    },
+    {
+      "timestamp": "2025-04-11 12:02:48",
+      "speaker": "user",
+      "message": "hi"
+    },
+    {
+      "timestamp": "2025-04-11 12:02:49",
+      "speaker": "bot",
+      "message": "謝謝你們今天來參觀！期待下次再見！"
+    },
+    {
+      "timestamp": "2025-04-11 12:03:04",
+      "speaker": "user",
+      "message": "hi"
+    },
+    {
+      "timestamp": "2025-04-11 12:03:04",
+      "speaker": "bot",
+      "message": "謝謝你們今天來參觀！期待下次再見！"
+    }
+  ],
+  "is_ended": false
+}
