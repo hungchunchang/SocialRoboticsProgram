@@ -51,12 +51,12 @@ AVAILABLE_PROVIDERS = {
 def create_stt(provider: str):
     """建立 STT 服務。"""
     if provider == "deepgram":
-        from pipecat.services.deepgram import DeepgramSTTService
+        from pipecat.services.deepgram.stt import DeepgramSTTService
         return DeepgramSTTService(
             api_key=os.getenv("DEEPGRAM_API_KEY", ""),
         )
     elif provider == "whisper":
-        from pipecat.services.openai import OpenAISTTService
+        from pipecat.services.openai.stt import OpenAISTTService
         return OpenAISTTService(
             api_key=os.getenv("OPENAI_API_KEY", ""),
             model="whisper-1",
@@ -68,7 +68,7 @@ def create_stt(provider: str):
 def create_llm(provider: str, model: str, system_prompt: str, temperature: float = 0.7):
     """建立 LLM 服務。"""
     if provider == "openai":
-        from pipecat.services.openai import OpenAILLMService
+        from pipecat.services.openai.llm import OpenAILLMService
         return OpenAILLMService(
             api_key=os.getenv("OPENAI_API_KEY", ""),
             model=model,
@@ -76,7 +76,7 @@ def create_llm(provider: str, model: str, system_prompt: str, temperature: float
             params=OpenAILLMService.InputParams(temperature=temperature),
         )
     elif provider == "anthropic":
-        from pipecat.services.anthropic import AnthropicLLMService
+        from pipecat.services.anthropic.llm import AnthropicLLMService
         return AnthropicLLMService(
             api_key=os.getenv("ANTHROPIC_API_KEY", ""),
             model=model,
@@ -90,13 +90,13 @@ def create_llm(provider: str, model: str, system_prompt: str, temperature: float
 def create_tts(provider: str, voice: str):
     """建立 TTS 服務。"""
     if provider == "elevenlabs":
-        from pipecat.services.elevenlabs import ElevenLabsTTSService
+        from pipecat.services.elevenlabs.tts import ElevenLabsTTSService
         return ElevenLabsTTSService(
             api_key=os.getenv("ELEVENLABS_API_KEY", ""),
             voice_id=voice,
         )
     else:
-        from pipecat.services.openai import OpenAITTSService
+        from pipecat.services.openai.tts import OpenAITTSService
         return OpenAITTSService(
             api_key=os.getenv("OPENAI_API_KEY", ""),
             voice=voice,

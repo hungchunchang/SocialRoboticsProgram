@@ -29,7 +29,6 @@ from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.runner import PipelineRunner
 from pipecat.pipeline.task import PipelineTask, PipelineParams
 from pipecat.audio.vad.silero import SileroVADAnalyzer
-from pipecat.transports.services.helpers.daily_rest import DailyRESTHelper
 
 from pipeline_factory import (
     AVAILABLE_PROVIDERS,
