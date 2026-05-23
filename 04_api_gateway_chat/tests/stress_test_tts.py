@@ -1,0 +1,57 @@
+import asyncio
+import time
+import aiohttp
+import os
+from dotenv import load_dotenv
+
+# 直接讀取 api-gateway 下的 .env
+load_dotenv("../../../api-gateway/.env")
+
+API_KEY = os.getenv("API_KEY")
+TTS_ENDPOINT = os.getenv("TTS_ENDPOINT")
+
+async def test_tts(session, idx):
+    params = {
+        "text": f"這是第 {idx} 個語音合成壓力測試。",
+        "speaker": "ellie",
+        "language": "ZH",
+        "format": "mp3"
+    }
+
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    
+    start = time.time()
+    try:
+        async with session.get(TTS_ENDPOINT, params=params, headers=headers) as resp:
+            if resp.status == 200:
+                audio_content = await resp.read()
+                print(f"[TTS {idx}] 成功: 收到音訊 (大小: {len(audio_content)} bytes)")
+            else:
+                print(f"[TTS {idx}] 錯誤 {resp.status}: {await resp.text()}")
+    except Exception as e:
+        print(f"[TTS {idx}] 異常: {e}")
+    
+    return time.time() - start
+
+async def main():
+    if not TTS_ENDPOINT:
+        print("錯誤: 找不到 TTS_ENDPOINT")
+        return
+
+    num_requests = 10
+    print(f"啟動 {num_requests} 個併發 TTS 請求...")
+    
+    async with aiohttp.ClientSession() as session:
+        tasks = [test_tts(session, i) for i in range(num_requests)]
+        start_all = time.time()
+        durations = await asyncio.gather(*tasks)
+        end_all = time.time()
+
+    print("\n" + "="*30)
+    print(f"TTS 壓力測試結果")
+    print(f"總耗時: {end_all - start_all:.2f}s")
+    print(f"平均響應時間: {sum(durations)/len(durations):.2f}s")
+    print("="*30)
+
+if __name__ == "__main__":
+    asyncio.run(main())

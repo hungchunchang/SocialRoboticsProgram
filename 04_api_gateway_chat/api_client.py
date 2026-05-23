@@ -3,12 +3,14 @@ import requests
 import json
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv("../../api-gateway/.env")
 
 API_KEY = os.getenv("API_KEY")
 ASR_ENDPOINT = os.getenv("ASR_ENDPOINT")
 TTS_ENDPOINT = os.getenv("TTS_ENDPOINT")
-LLM_ENDPOINT = os.getenv("LLM_ENDPOINT")
+# 修正路徑：確保包含 /v1/chat/completions
+LLM_BASE_URL = os.getenv("LLM_ENDPOINT")
+LLM_ENDPOINT = f"{LLM_BASE_URL}/v1/chat/completions" if LLM_BASE_URL else None
 
 HEADERS = {
     "Authorization": f"Bearer {API_KEY}"
@@ -33,12 +35,15 @@ def call_llm(user_input, system_prompt="你是一個友善的社交機器人助�
         return f"LLM 異常: {e}"
 
 def call_tts(text):
-    data = {
+    params = {
         "text": text,
-        "voice": "zh-TW-Female"
+        "speaker": "ellie",
+        "language": "ZH",
+        "format": "mp3"
     }
     try:
-        response = requests.post(TTS_ENDPOINT, headers=HEADERS, json=data)
+        # 依照使用者提供的 test.py，TTS 應該是 GET method
+        response = requests.get(TTS_ENDPOINT, headers=HEADERS, params=params)
         if response.status_code == 200:
             return response.content
         else:
