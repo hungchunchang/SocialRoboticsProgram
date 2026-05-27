@@ -9,7 +9,7 @@ class SileroVADHandler:
         self.model, utils = torch.hub.load(repo_or_dir='snakers4/silero-vad',
                                           model='silero_vad',
                                           force_reload=False,
-                                          onnx=False)
+                                          onnx=Fals)
         (self.get_speech_timestamps, _, self.read_audio, _, _) = utils
         self.sample_rate = sample_rate
         self.threshold = threshold

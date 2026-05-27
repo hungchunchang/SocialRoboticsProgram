@@ -5,4 +5,8 @@ websockets
 uvicorn
 torch
 torchaudio
+pyaudio
 numpy
+
+asyncio
+pydub 

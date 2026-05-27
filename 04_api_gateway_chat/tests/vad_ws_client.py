@@ -61,6 +61,10 @@ async def receive_messages(websocket):
                 audio_payload = base64.b64decode(data.get("payload"))
                 # 伺服器傳回的是 MP3 格式
                 audio_segment = AudioSegment.from_file(io.BytesIO(audio_payload), format="mp3")
+                
+                # 🌟 強制標準化格式，解決 Mac AUHAL -50 錯誤
+                audio_segment = audio_segment.set_frame_rate(44100).set_channels(2)
+                
                 play(audio_segment)
                 
     except Exception as e:
